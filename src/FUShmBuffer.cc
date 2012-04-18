@@ -719,7 +719,7 @@ bool FUShmBuffer::writeRecoEventData(unsigned int runNumber,
 
 //______________________________________________________________________________
 bool FUShmBuffer::writeErrorEventData(unsigned int runNumber,
-		unsigned int fuProcessId, unsigned int iRawCell) {
+		unsigned int fuProcessId, unsigned int iRawCell, bool checkValue) {
 	FUShmRawCell *raw = rawCell(iRawCell);
 
 	unsigned int dataSize = sizeof(uint32_t) * (4 + 1024) + raw->eventSize();
@@ -775,7 +775,7 @@ bool FUShmBuffer::writeErrorEventData(unsigned int runNumber,
 	unsigned int iRecoCell = nextRecoWriteIndex();
 	FUShmRecoCell* reco = recoCell(iRecoCell);
 	setEvtState(iRawCell, evt::RECOWRITING);
-	setEvtDiscard(iRawCell, 1);
+	setEvtDiscard(iRawCell, 1, checkValue);
 	reco->writeErrorEvent(iRawCell, runNumber, raw->evtNumber(), fuProcessId,
 			data, dataSize);
 	delete[] data;
@@ -1416,7 +1416,8 @@ bool FUShmBuffer::setDqmState(unsigned int index, dqm::State_t state) {
 }
 
 //______________________________________________________________________________
-bool FUShmBuffer::setEvtDiscard(unsigned int index, unsigned int discard) {
+bool FUShmBuffer::setEvtDiscard(unsigned int index, unsigned int discard,
+		bool checkValue) {
 	stringstream details;
 	details << "index<nRawCells_ assertion failed! Actual index is " << index;
 	XCEPT_ASSERT(index < nRawCells_, evf::Exception, details.str());
@@ -1424,7 +1425,11 @@ bool FUShmBuffer::setEvtDiscard(unsigned int index, unsigned int discard) {
 			+ evtDiscardOffset_);
 	pcount += index;
 	lock();
-	*pcount = discard;
+	if (checkValue) {
+		if (*pcount < discard)
+			*pcount = discard;
+	} else
+		*pcount = discard;
 	unlock();
 	return true;
 }

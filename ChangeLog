@@ -1,3 +1,8 @@
+2012-04-18  Andrei Spataru  <aspataru@cern.ch>
+
+	* tag V00-08-15
+	* added check at setEvtDiscard
+	
 2012-04-12  Andrei Spataru  <aspataru@cern.ch>
 
 	* tag V00-08-14

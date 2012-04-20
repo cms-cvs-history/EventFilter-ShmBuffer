@@ -157,6 +157,7 @@ FUShmBuffer::~FUShmBuffer() {
 // implementation of member functions
 ////////////////////////////////////////////////////////////////////////////////
 
+
 //______________________________________________________________________________
 void FUShmBuffer::initialize(unsigned int shmid, unsigned int semid) {
 	shmid_ = shmid;
@@ -670,7 +671,7 @@ void FUShmBuffer::scheduleRawEmptyCellForDiscardServerSide(FUShmRawCell* cell) {
 //______________________________________________________________________________
 bool FUShmBuffer::writeRecoInitMsg(unsigned int outModId,
 		unsigned int fuProcessId, unsigned int fuGuid, unsigned char *data,
-		unsigned int dataSize) {
+		unsigned int dataSize, unsigned int nExpectedEPs) {
 	if (dataSize > recoCellPayloadSize_) {
 		cout << "FUShmBuffer::writeRecoInitMsg() ERROR: buffer overflow."
 				<< endl;
@@ -680,7 +681,7 @@ bool FUShmBuffer::writeRecoInitMsg(unsigned int outModId,
 	waitRecoWrite();
 	unsigned int iCell = nextRecoWriteIndex();
 	FUShmRecoCell* cell = recoCell(iCell);
-	cell->writeInitMsg(outModId, fuProcessId, fuGuid, data, dataSize);
+	cell->writeInitMsg(outModId, fuProcessId, fuGuid, data, dataSize,nExpectedEPs);
 	postRecoIndexToRead(iCell);
 	if (segmentationMode_)
 		shmdt(cell);

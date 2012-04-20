@@ -114,7 +114,8 @@ namespace evf {
 				    unsigned int   fuProcessId,
 				    unsigned int   fuGuid,
 				    unsigned char *data,
-				    unsigned int   dataSize);
+				    unsigned int   dataSize,
+				    unsigned int   nExpectedEPs);
 
     bool           writeRecoEventData(unsigned int   runNumber,
 				      unsigned int   evtNumber,
